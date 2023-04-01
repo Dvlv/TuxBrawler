@@ -1,0 +1,18 @@
+{
+    "name": "Flatlands",
+    "sprite": "flatlands.png",
+    "collisions": [
+        [
+            100,
+            650,
+            1000,
+            200
+        ],
+        [
+            100,
+            0,
+            1000,
+            100
+        ]
+    ]
+}
