@@ -8,11 +8,14 @@ using CollisionRects = std::vector<Rectangle>;
 
 BrawlState::BrawlState() : m_arena{"map1.map"} {
     // TODO take reprs of selected brawlers and create them via Factory
-    m_brawlers.push_back(
-        std::make_unique<Brawler>(Rectangle{500, 500, 30, 30}, 2, 2));
+    m_brawlers.push_back(std::make_unique<Brawler>(Vector2{500, 500}, 2, 2));
 
-    m_brawlers.push_back(
-        std::make_unique<Player>(Rectangle{500, 500, 30, 30}, 2, 2));
+    m_brawlers.push_back(std::make_unique<Player>(Vector2{500, 500}, 2, 2));
+
+    // Spawn them in and count down or something
+    for (auto &brawler : m_brawlers) {
+        brawler->setMovable();
+    }
 }
 
 bool BrawlState::isFinshed() { return m_isFinished; }
