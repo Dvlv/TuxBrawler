@@ -6,8 +6,10 @@
 #include "raylib-cpp.hpp"
 #include "raylib.h"
 
-Player::Player(Vector2 pos, int numJumps, int weight)
-    : Brawler(pos, numJumps, weight) {}
+Player::Player(Vector2 pos, int numJumps, int weight, std::string name)
+    : Brawler(pos, numJumps, weight, name) {}
+
+Player::Player(json brawlerJson) : Brawler(brawlerJson) {}
 
 void Player::draw() {
     if (m_isPerformingAttack) {
@@ -15,6 +17,7 @@ void Player::draw() {
     } else {
         DrawRectangleRec(Rectangle{m_pos.x, m_pos.y, 50, 50}, GREEN);
     }
+    DrawText(m_name.data(), m_pos.x, m_pos.y - 20, 20, BLACK);
 }
 
 void Player::update() {
