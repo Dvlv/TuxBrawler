@@ -14,6 +14,15 @@ Player::Player(json brawlerJson) : Brawler(brawlerJson) {}
 void Player::draw() {
     if (m_isPerformingAttack) {
         DrawRectangleRec(Rectangle{m_pos.x, m_pos.y, 50, 50}, RED);
+
+        if (m_attackBeingPerformed != nullptr) {
+            std::string txt =
+                "Atk: hs=" +
+                std::to_string(m_attackBeingPerformed->hitStunTime) +
+                " performed";
+
+            DrawText(txt.c_str(), 400, 100, 40, BLACK);
+        }
     } else {
         DrawRectangleRec(Rectangle{m_pos.x, m_pos.y, 50, 50}, GREEN);
     }
@@ -94,20 +103,24 @@ void Player::processAttackInputs() {
         if (m_currentAttackFrame >= 30) {
             m_isPerformingAttack = false;
             m_currentAttackFrame = 0;
+            m_attackBeingPerformed = nullptr;
         }
         return;
     }
     if (IsKeyPressed(KEY_A)) {
         // basic attack
         m_isPerformingAttack = true;
+        m_attackBeingPerformed = &m_attackData[BrawlerAttacks::Basic];
 
         // TODO choose attack based on some kind of graph?
     } else if (IsKeyPressed(KEY_S)) {
         // special
         m_isPerformingAttack = true;
+        m_attackBeingPerformed = &m_attackData[BrawlerAttacks::Special];
 
     } else if (IsKeyPressed(KEY_D)) {
         // Finisher
         m_isPerformingAttack = true;
+        m_attackBeingPerformed = &m_attackData[BrawlerAttacks::Finisher];
     }
 }

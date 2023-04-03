@@ -55,14 +55,15 @@ class Brawler {
     bool m_canMove = false;
     bool m_isInAir = false;
     bool m_isBlocking = false;
-    bool m_isPerformingAttack = false;
     bool m_isInKnockback = false;
     bool m_isHitStun = false;
+    bool m_isPerformingAttack = false;
+    BrawlerAttackData *m_attackBeingPerformed = nullptr;
+    BrawlerAnimations m_currentAnim = BrawlerAnimations::Idle;
 
     int m_damage = 0;
     int m_currentAttackFrame = 0;
     int m_currentJump = 0;
-    Vector2 m_velocity = Vector2{.x = 0, .y = 0};
-
+    Vector2 m_velocity = Vector2{0, 0};
     Vector2 m_pos = {0, 0};
 };

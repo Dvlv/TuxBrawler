@@ -33,7 +33,7 @@
     },
     "attacks": {
         "basic": {
-            "sprites": "basic.png",
+            "sprite": "basic.png",
             "numFrames": 3,
             "animFPS": 6,
             "hitStunTime": 0.2,
@@ -47,7 +47,7 @@
             ]
         },
         "special": {
-            "sprites": "special.png",
+            "sprite": "special.png",
             "numFrames": 4,
             "animFPS": 5,
             "hitStunTime": 0.8,
@@ -61,7 +61,7 @@
             ]
         },
         "finisher": {
-            "sprites": "finisher.png",
+            "sprite": "finisher.png",
             "numFrames": 3,
             "animFPS": 3,
             "hitStunTime": 1.5,

@@ -2,6 +2,7 @@
 #include "raylib-cpp.hpp"
 #include "raylib.h"
 #include <string_view>
+#include <vector>
 
 Brawler::Brawler(Vector2 pos, int numJumps, int weight, std::string name) {
     m_pos = pos;
@@ -40,17 +41,97 @@ Brawler::Brawler(json brawlerJson) {
                 this->parseAnimJson(anim.value());
         }
     }
+
+    for (auto atk : brawlerJson["attacks"].items()) {
+        std::string atkType = atk.key();
+
+        if (atkType == "basic") {
+            m_attackData[BrawlerAttacks::Basic] =
+                this->parseAtkJson(atk.value());
+        } else if (atkType == "special") {
+            m_attackData[BrawlerAttacks::Special] =
+                this->parseAtkJson(atk.value());
+        } else if (atkType == "finisher") {
+            m_attackData[BrawlerAttacks::Finisher] =
+                this->parseAtkJson(atk.value());
+        }
+    }
 }
 
 BrawlerAnimData Brawler::parseAnimJson(json animData) {
-    std::string spriteSheetPath = animData["sprite"];
-    raylib::Texture tex(spriteSheetPath);
+    // TODO should these presence-checks be negative, so I can do a "you are
+    // missing XX" warning?
+    std::string sprite = ""; // TODO default
+    int numFrames = 1;
+    int animFPS = 1;
+
+    if (animData.contains("sprite")) {
+        sprite = animData["sprite"];
+    }
+
+    if (animData.contains("numFrames")) {
+        numFrames = animData["numFrames"];
+    }
+
+    if (animData.contains("animFPS")) {
+        animFPS = animData["animFPS"];
+    }
 
     return BrawlerAnimData{
-        .spriteSheet = spriteSheetPath,
-        .numFrames = animData["numFrames"],
-        .animFPS = animData["animFPS"],
+        //.spriteSheet = raylib::Texture(sprite),
+        .numFrames = numFrames,
+        .animFPS = animFPS,
     };
+}
+
+BrawlerAttackData Brawler::parseAtkJson(json atkData) {
+    std::string sprite = ""; // TODO default
+    int numFrames = 1;
+    int animFPS = 1;
+    double hitStunTime = 0.5;
+
+    if (atkData.contains("sprite")) {
+        sprite = atkData["sprite"];
+    }
+
+    if (atkData.contains("numFrames")) {
+        numFrames = atkData["numFrames"];
+    }
+
+    if (atkData.contains("animFPS")) {
+        animFPS = atkData["animFPS"];
+    }
+
+    if (atkData.contains("hitStunTime")) {
+        hitStunTime = atkData["hitStunTime"];
+    }
+
+    std::vector<Rectangle> hitboxRects{};
+
+    if (atkData.contains("hitboxes")) {
+        std::vector<std::vector<int>> hitboxes =
+            atkData["hitboxes"].get<std::vector<std::vector<int>>>();
+
+        // this is an array of arrays of 4 ints, I.E. an array of Rectangle args
+        for (auto &rectVec : hitboxes) {
+            if (rectVec.size() != 4) {
+                printf("A rectangle in Attack json has !=4 ints, ignoring!\n");
+            } else {
+                float x = (float)rectVec[0];
+                float y = (float)rectVec[1];
+                float w = (float)rectVec[2];
+                float h = (float)rectVec[3];
+                hitboxRects.push_back(Rectangle{x, y, w, h});
+            }
+        }
+    }
+
+    // TODO hitboxes
+    return BrawlerAttackData{//.spriteSheet = raylib::Texture(sprite),
+                             .numFrames = numFrames,
+                             .animFPS = animFPS,
+                             .hitStunTime = hitStunTime,
+                             .hitboxes = hitboxRects};
 }
 
 void Brawler::draw() {
