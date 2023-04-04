@@ -1,6 +1,7 @@
 #pragma once
 #include "enums.h"
 #include "raylib-cpp.hpp"
+#include <filesystem>
 #include <map>
 #include <nlohmann/json.hpp>
 #include <string_view>
@@ -27,7 +28,7 @@ typedef struct {
 class Brawler {
   public:
     Brawler(Vector2 pos, int numJumps, int weight, std::string name);
-    Brawler(json brawlerJson);
+    Brawler(json brawlerJson, std::filesystem::path jsonPath);
 
     virtual void draw();
     virtual void update();

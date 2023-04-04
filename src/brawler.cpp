@@ -11,7 +11,7 @@ Brawler::Brawler(Vector2 pos, int numJumps, int weight, std::string name) {
     m_name = name;
 }
 
-Brawler::Brawler(json brawlerJson) {
+Brawler::Brawler(json brawlerJson, std::filesystem::path jsonPath) {
     m_pos = Vector2{0, 0};
     m_numJumps = brawlerJson["numJumps"];
     m_weight = brawlerJson["weight"];
@@ -126,7 +126,6 @@ BrawlerAttackData Brawler::parseAtkJson(json atkData) {
         }
     }
 
-    // TODO hitboxes
     return BrawlerAttackData{//.spriteSheet = raylib::Texture(sprite),
                              .numFrames = numFrames,
                              .animFPS = animFPS,
@@ -145,6 +144,7 @@ void Brawler::move() {
     // Cap
     // TODO knockback needs much higher cap
     // detect if in knockback, apply diff cap
+    // TODO blocked by other players and walls
     if (m_velocity.x > m_xSpeedCap) {
         m_velocity.x = m_xSpeedCap;
 

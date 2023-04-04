@@ -1,15 +1,16 @@
 #include "player.h"
-#include "algorithm"
 #include "brawler.h"
 #include "constants.h"
-#include "math.h"
 #include "raylib-cpp.hpp"
 #include "raylib.h"
+#include <algorithm>
+#include <filesystem>
 
 Player::Player(Vector2 pos, int numJumps, int weight, std::string name)
     : Brawler(pos, numJumps, weight, name) {}
 
-Player::Player(json brawlerJson) : Brawler(brawlerJson) {}
+Player::Player(json brawlerJson, std::filesystem::path jsonPath)
+    : Brawler(brawlerJson, jsonPath) {}
 
 void Player::draw() {
     if (m_isPerformingAttack) {
