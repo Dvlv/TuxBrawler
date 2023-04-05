@@ -16,6 +16,7 @@ class Arena {
 
     // maps won't update to start with
     void draw();
+    CollisionRects getCollisionRects();
 
   private:
     raylib::Texture2D m_background;

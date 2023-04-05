@@ -10,6 +10,7 @@
 
 using json = nlohmann::json;
 using TexVec = std::vector<raylib::Texture>;
+using CollisionRects = std::vector<Rectangle>;
 
 typedef struct {
     raylib::Texture spriteSheet;
@@ -31,13 +32,14 @@ class Brawler {
     Brawler(json brawlerJson, std::filesystem::path jsonPath);
 
     virtual void draw();
-    virtual void update();
-    virtual void move();
+    virtual void update(CollisionRects &arenaCollisions);
+    virtual void move(CollisionRects &arenaCollisions);
 
     BrawlerAnimData parseAnimJson(json animData);
     BrawlerAttackData parseAtkJson(json atkData);
 
     void setMovable();
+    void setPos(Vector2 pos);
 
   protected:
     std::string m_name;

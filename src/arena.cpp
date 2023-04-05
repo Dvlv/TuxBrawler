@@ -1,8 +1,11 @@
 #include "arena.h"
 #include "raylib-cpp.hpp"
+#include "raylib.h"
 #include <filesystem>
 #include <string>
 #include <string_view>
+
+using CollisionRects = std::vector<Rectangle>;
 
 Arena::Arena() {
     // TODO default a map here
@@ -18,7 +21,7 @@ Arena::Arena(json mapJson, std::filesystem::path jsonPath) {
     std::filesystem::path backgroundFilePath =
         jsonPath / std::filesystem::path(background);
 
-    // m_background = raylib::Texture(backgroundFilePath);
+    m_background = raylib::Texture(backgroundFilePath);
 
     if (mapJson.contains("collisions")) {
         std::vector<std::vector<int>> collisions =
@@ -40,4 +43,11 @@ Arena::Arena(json mapJson, std::filesystem::path jsonPath) {
     }
 }
 
-void Arena::draw() {}
+void Arena::draw() {
+    DrawTexture(m_background, 0, 0, WHITE);
+    for (auto &r : m_solidCollisionRects) {
+        DrawRectangleRec(r, {200, 0, 0, 125});
+    }
+}
+
+CollisionRects Arena::getCollisionRects() { return m_solidCollisionRects; }

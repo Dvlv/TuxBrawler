@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <filesystem>
 
+using CollisionRects = std::vector<Rectangle>;
+
 Player::Player(Vector2 pos, int numJumps, int weight, std::string name)
     : Brawler(pos, numJumps, weight, name) {}
 
@@ -14,7 +16,8 @@ Player::Player(json brawlerJson, std::filesystem::path jsonPath)
 
 void Player::draw() {
     if (m_isPerformingAttack) {
-        DrawRectangleRec(Rectangle{m_pos.x, m_pos.y, 50, 50}, RED);
+        DrawRectangleRec(
+            Rectangle{m_pos.x, m_pos.y, BRAWLER_WIDTH, BRAWLER_HEIGHT}, RED);
 
         if (m_attackBeingPerformed != nullptr) {
             std::string txt =
@@ -25,12 +28,14 @@ void Player::draw() {
             DrawText(txt.c_str(), 400, 100, 40, BLACK);
         }
     } else {
-        DrawRectangleRec(Rectangle{m_pos.x, m_pos.y, 50, 50}, GREEN);
+        DrawRectangleRec(
+            Rectangle{m_pos.x, m_pos.y, BRAWLER_WIDTH, BRAWLER_HEIGHT}, GREEN);
+        DrawEllipse(m_pos.x, m_pos.y, 2, 2, RED);
     }
     DrawText(m_name.data(), m_pos.x, m_pos.y - 20, 20, BLACK);
 }
 
-void Player::update() {
+void Player::update(CollisionRects &arenaCollisions) {
     // Left / Right
     this->processMovementInputs();
     // this->processKnockback();
@@ -41,7 +46,7 @@ void Player::update() {
     // Attack
     this->processAttackInputs();
 
-    this->move();
+    this->move(arenaCollisions);
 }
 
 void Player::processMovementInputs() {
@@ -78,18 +83,8 @@ void Player::processJumpAndGravity() {
         m_velocity.y -= m_jumpStr;
         m_currentJump++;
         m_isInAir = true;
-
     } else {
         m_velocity.y += GRAVITY;
-        // TODO solid ground
-        if (m_pos.y >= 600) {
-            m_pos.y = std::min(600, (int)m_pos.y);
-            m_velocity.y = 0;
-
-            // on floor, reset jump
-            m_currentJump = 0;
-            m_isInAir = false;
-        }
     }
 }
 

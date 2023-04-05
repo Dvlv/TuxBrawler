@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
+using CollisionRects = std::vector<Rectangle>;
 
 class Player : public Brawler {
   public:
@@ -11,7 +12,7 @@ class Player : public Brawler {
     Player(json brawlerJson, std::filesystem::path jsonPath);
 
     virtual void draw() override;
-    virtual void update() override;
+    virtual void update(CollisionRects &arenaCollisions) override;
 
   private:
     void processMovementInputs();

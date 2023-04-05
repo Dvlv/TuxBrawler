@@ -12,11 +12,11 @@ using json = nlohmann::json;
 BrawlState::BrawlState() {
     // load map from json
     // TODO this will eventually move to a map select screen
-    json mapJson;
-    std::ifstream mapFile("src/resources/maps/flatlands/map.json");
-    mapFile >> mapJson;
+    json arenaJson;
+    std::ifstream arenaFile("src/resources/arenas/flatlands/arena.json");
+    arenaFile >> arenaJson;
 
-    m_arena = Arena(mapJson, "");
+    m_arena = Arena(arenaJson, "src/resources/arenas/flatlands");
 
     // Load tux brawler from JSON
     // TODO this will eventually move to main or CharSelect loading screen or
@@ -34,6 +34,7 @@ BrawlState::BrawlState() {
     // Spawn them in and count down or something
     for (auto &brawler : m_brawlers) {
         brawler->setMovable();
+        brawler->setPos({400, 400});
     }
 }
 
@@ -49,7 +50,11 @@ void BrawlState::draw() {
 }
 
 void BrawlState::update() {
+    // TODO this shouldnt be copied on every update, maybe store this in the
+    // brawlstate itself
+    CollisionRects mapCollisions = m_arena.getCollisionRects();
+
     for (auto &brawler : m_brawlers) {
-        brawler->update();
+        brawler->update(mapCollisions);
     }
 }
