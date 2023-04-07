@@ -11,3 +11,8 @@ const double GRAVITY = 1.5;
 // brawlers
 const int BRAWLER_WIDTH = 50;
 const int BRAWLER_HEIGHT = 50;
+
+// charselect
+const int CSSPRITE_WIDTH = 100;
+const int CSSPRITE_HEIGHT = 100;
+const int TITLE_FONT_SIZE = 40;

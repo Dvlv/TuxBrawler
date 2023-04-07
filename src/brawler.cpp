@@ -2,6 +2,8 @@
 #include "constants.h"
 #include "raylib-cpp.hpp"
 #include "raylib.h"
+#include <filesystem>
+#include <iostream>
 #include <string_view>
 #include <vector>
 
@@ -15,11 +17,17 @@ Brawler::Brawler(Vector2 pos, int numJumps, int weight, std::string name) {
 }
 
 Brawler::Brawler(json brawlerJson, std::filesystem::path jsonPath) {
+    // TODO proper defaults for these
+    std::filesystem::path spritesPath = jsonPath / "sprites";
+    std::cout << jsonPath << std::endl;
+
     m_pos = Vector2{0, 0};
     m_numJumps = brawlerJson["numJumps"];
     m_weight = brawlerJson["weight"];
     m_speed = brawlerJson["speed"];
     m_name = (std::string)brawlerJson["name"];
+    m_charSelectSprite =
+        raylib::Texture(spritesPath / brawlerJson["charSelectSprite"]);
 
     for (auto anim : brawlerJson["animations"].items()) {
         std::string animName = anim.key();
@@ -219,3 +227,5 @@ void Brawler::move(CollisionRects &arenaCollisions) {
 void Brawler::setMovable() { m_canMove = true; }
 
 void Brawler::setPos(Vector2 pos) { m_pos = pos; }
+
+raylib::Texture &Brawler::getCharSelectSprite() { return m_charSelectSprite; }

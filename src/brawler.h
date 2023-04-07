@@ -41,6 +41,8 @@ class Brawler {
     void setMovable();
     void setPos(Vector2 pos);
 
+    raylib::Texture &getCharSelectSprite();
+
   protected:
     std::string m_name;
     int m_numJumps = 1;

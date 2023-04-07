@@ -1,5 +1,6 @@
 enum class GameState {
     Title,
+    CharSelect,
     Menu,
     Brawl,
 };

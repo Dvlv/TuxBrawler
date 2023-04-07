@@ -1,0 +1,84 @@
+{
+    "name": "Tux",
+    "numJumps": 2,
+    "speed": 3,
+    "weight": 10,
+    "charSelectSprite": "CSSprite.png",
+    "animations": {
+        "idle": {
+            "sprite": "idle.png",
+            "numFrames": 2,
+            "animFPS": 2
+        },
+        "run": {
+            "sprite": "run.png",
+            "numFrames": 4,
+            "animFPS": 16
+        },
+        "block": {
+            "sprite": "block.png",
+            "numFrames": 1,
+            "animFPS": 1
+        },
+        "hit": {
+            "sprite": "hit.png",
+            "numFrames": 2,
+            "animFPS": 2
+        },
+        "jump": {
+            "sprite": "jump.png",
+            "numFrames": 2,
+            "animFPS": 2
+        }
+    },
+    "attacks": {
+        "basic": {
+            "sprite": "basic.png",
+            "numFrames": 3,
+            "animFPS": 6,
+            "hitStunTime": 0.2,
+            "hitboxes": [
+                [
+                    50,
+                    50,
+                    10,
+                    10
+                ]
+            ]
+        },
+        "special": {
+            "sprite": "special.png",
+            "numFrames": 4,
+            "animFPS": 5,
+            "hitStunTime": 0.8,
+            "hitboxes": [
+                [
+                    50,
+                    50,
+                    10,
+                    10
+                ]
+            ]
+        },
+        "finisher": {
+            "sprite": "finisher.png",
+            "numFrames": 3,
+            "animFPS": 3,
+            "hitStunTime": 1.5,
+            "hitboxes": [
+                [
+                    50,
+                    50,
+                    20,
+                    20
+                ],
+                [
+                    -50,
+                    50,
+                    20,
+                    20
+                ]
+            ]
+        }
+    }
+}

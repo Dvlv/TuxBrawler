@@ -9,6 +9,6 @@ class State {
 
     bool isFinshed();
 
-  private:
+  protected:
     bool m_isFinished = false;
 };

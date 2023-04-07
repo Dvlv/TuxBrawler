@@ -5,9 +5,11 @@
 #include "raylib-cpp.hpp"
 #include "state.h"
 #include <fstream>
+#include <memory>
 #include <nlohmann/json.hpp>
 
 using CollisionRects = std::vector<Rectangle>;
+using SharedBrawler = std::shared_ptr<Brawler>;
 using json = nlohmann::json;
 
 BrawlState::BrawlState() : State() {
@@ -19,18 +21,8 @@ BrawlState::BrawlState() : State() {
 
     m_arena = Arena(arenaJson, "src/resources/arenas/flatlands");
 
-    // Load tux brawler from JSON
-    // TODO this will eventually move to main or CharSelect loading screen or
-    // something
-    json tuxJson;
-    std::ifstream tuxFile("src/resources/brawlers/tux/brawler.json");
-    tuxFile >> tuxJson;
-
     m_brawlers.push_back(
-        std::make_unique<Player>(tuxJson, "src/resources/brawlers/tux"));
-
-    m_brawlers.push_back(
-        std::make_unique<Brawler>(Vector2{500, 500}, 2, 2, "Tux"));
+        std::make_shared<Brawler>(Vector2{500, 500}, 2, 2, "Tux"));
 
     // Spawn them in and count down or something
     for (auto &brawler : m_brawlers) {
@@ -56,4 +48,11 @@ void BrawlState::update() {
     for (auto &brawler : m_brawlers) {
         brawler->update(mapCollisions);
     }
+}
+
+void BrawlState::setPlayerBrawler(SharedBrawler brawler) {
+    std::shared_ptr<Player> *player =
+        dynamic_cast<std::shared_ptr<Player> *>(brawler.get());
+
+    m_brawlers.push_back(*player);
 }
