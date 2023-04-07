@@ -2,18 +2,19 @@
 #include "constants.h"
 #include "raylib-cpp.hpp"
 #include "raylib.h"
+#include "state.h"
 #include <memory>
 
-using UnqBrawlSt = std::unique_ptr<BrawlState>;
+using UnqState = std::unique_ptr<State>;
 
-void update(UnqBrawlSt &bs) { bs->update(); }
+void update(UnqState &cs) { cs->update(); }
 
-void draw(UnqBrawlSt &bs) {
+void draw(UnqState &cs) {
     BeginDrawing();
 
     ClearBackground(RAYWHITE);
 
-    bs->draw();
+    cs->draw();
 
     EndDrawing();
 }
@@ -23,7 +24,7 @@ int main() {
 
     SetTargetFPS(FPS);
 
-    UnqBrawlSt bs = std::make_unique<BrawlState>();
+    UnqState bs = std::make_unique<BrawlState>();
 
     while (!window.ShouldClose()) {
         update(bs);

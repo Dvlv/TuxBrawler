@@ -3,13 +3,14 @@
 #include "brawler.h"
 #include "player.h"
 #include "raylib-cpp.hpp"
+#include "state.h"
 #include <fstream>
 #include <nlohmann/json.hpp>
 
 using CollisionRects = std::vector<Rectangle>;
 using json = nlohmann::json;
 
-BrawlState::BrawlState() {
+BrawlState::BrawlState() : State() {
     // load map from json
     // TODO this will eventually move to a map select screen
     json arenaJson;
@@ -37,8 +38,6 @@ BrawlState::BrawlState() {
         brawler->setPos({400, 400});
     }
 }
-
-bool BrawlState::isFinshed() { return m_isFinished; }
 
 void BrawlState::draw() {
     DrawText("BRAWL!", 600, 10, 20, BLACK);

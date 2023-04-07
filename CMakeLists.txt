@@ -46,6 +46,10 @@ set(SOURCES
     src/constants.h
     src/enums.h
     src/brawler.h
+    src/state.h
+    src/state.cpp
+    src/charselectstate.h
+    src/charselectstate.cpp
     src/brawler.cpp
     src/brawlstate.h
     src/brawlstate.cpp

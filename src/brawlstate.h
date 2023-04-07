@@ -2,22 +2,20 @@
 #include "arena.h"
 #include "brawler.h"
 #include "raylib-cpp.hpp"
+#include "state.h"
 #include <memory>
 #include <vector>
 
-class BrawlState {
+class BrawlState : public State {
     using Brawlers = std::vector<std::unique_ptr<Brawler>>;
 
   public:
     BrawlState();
 
-    bool isFinshed();
-
-    void draw();
-    void update();
+    void update() override;
+    void draw() override;
 
   private:
     Brawlers m_brawlers;
-    bool m_isFinished = false;
     Arena m_arena;
 };
