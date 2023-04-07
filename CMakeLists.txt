@@ -46,6 +46,8 @@ set(SOURCES
     src/constants.h
     src/enums.h
     src/brawler.h
+    src/brawlerjsonparser.h
+    src/brawlerjsonparser.cpp
     src/state.h
     src/state.cpp
     src/charselectstate.h

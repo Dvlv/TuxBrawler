@@ -1,6 +1,7 @@
 #include "brawlstate.h"
 #include "arena.h"
 #include "brawler.h"
+#include "brawlerjsonparser.h"
 #include "player.h"
 #include "raylib-cpp.hpp"
 #include "state.h"
@@ -50,9 +51,10 @@ void BrawlState::update() {
     }
 }
 
-void BrawlState::setPlayerBrawler(SharedBrawler brawler) {
-    std::shared_ptr<Player> *player =
-        dynamic_cast<std::shared_ptr<Player> *>(brawler.get());
+void BrawlState::setPlayerBrawler(BrawlerData brawlerData) {
+    std::shared_ptr<Player> player = std::make_shared<Player>(brawlerData);
+    player->setPos({300, 300});
+    player->setMovable();
 
-    m_brawlers.push_back(*player);
+    m_brawlers.push_back(player);
 }

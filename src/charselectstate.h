@@ -1,6 +1,7 @@
 #pragma once
 
 #include "brawler.h"
+#include "brawlerjsonparser.h"
 #include "state.h"
 #include <memory>
 #include <vector>
@@ -14,11 +15,13 @@ class CharSelectState : public State {
     void update() override;
     void draw() override;
 
-    SharedBrawler getSelectedBrawler();
+    BrawlerData getSelectedBrawler();
 
   private:
-    std::vector<SharedBrawler> m_brawlers{};
-    SharedBrawler m_selectedBrawler;
+    std::vector<BrawlerData> m_brawlers{};
+    std::vector<raylib::Texture> m_brawlerSprites{};
+
+    BrawlerData m_selectedBrawler;
     int m_selectedBrawlerIdx = 0;
     Color m_selectBorderColor = {0, 255, 0, 255};
     int m_selectBorderAlphaModifier = 1;

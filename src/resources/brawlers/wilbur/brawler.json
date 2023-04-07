@@ -1,8 +1,8 @@
 {
-    "name": "Tux",
-    "numJumps": 2,
-    "speed": 3,
-    "weight": 10,
+    "name": "Wilbur",
+    "numJumps": 1,
+    "speed": 2,
+    "weight": 14,
     "charSelectSprite": "CSSprite.png",
     "animations": {
         "idle": {

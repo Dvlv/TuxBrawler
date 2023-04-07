@@ -1,5 +1,6 @@
 #include "player.h"
 #include "brawler.h"
+#include "brawlerjsonparser.h"
 #include "constants.h"
 #include "raylib-cpp.hpp"
 #include "raylib.h"
@@ -11,8 +12,7 @@ using CollisionRects = std::vector<Rectangle>;
 Player::Player(Vector2 pos, int numJumps, int weight, std::string name)
     : Brawler(pos, numJumps, weight, name) {}
 
-Player::Player(json brawlerJson, std::filesystem::path jsonPath)
-    : Brawler(brawlerJson, jsonPath) {}
+Player::Player(BrawlerData brawlerData) : Brawler(brawlerData) {}
 
 void Player::draw() {
     if (m_isPerformingAttack) {

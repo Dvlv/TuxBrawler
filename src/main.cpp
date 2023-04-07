@@ -25,11 +25,7 @@ void update() {
         case GameState::CharSelect:
             gs = GameState::Brawl;
 
-            {
-                SharedBrawler chosenBrawler =
-                    dynamic_cast<CharSelectState *>(cs)->getSelectedBrawler();
-                bs->setPlayerBrawler(chosenBrawler);
-            }
+            bs->setPlayerBrawler(css->getSelectedBrawler());
 
             cs = bs.get();
 

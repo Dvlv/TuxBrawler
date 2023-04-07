@@ -1,5 +1,7 @@
 #include "charselectstate.h"
 #include "Functions.hpp"
+#include "Texture.hpp"
+#include "brawlerjsonparser.h"
 #include "constants.h"
 #include "raylib-cpp.hpp"
 #include "raylib.h"
@@ -10,12 +12,11 @@
 #include <memory>
 #include <nlohmann/json.hpp>
 
-using SharedBrawler = std::shared_ptr<Brawler>;
-
 CharSelectState::CharSelectState() {
     using path = std::filesystem::path;
 
     std::vector<path> brawlerFolders{};
+    BrawlerJsonParser parser{};
 
     const path charFolder = "src/resources/brawlers";
     for (const auto &childDir :
@@ -32,11 +33,15 @@ CharSelectState::CharSelectState() {
 
             std::cout << brawlerFolder << std::endl;
             json brawlerJson;
+
             std::ifstream brawlerFile(jsonPath);
             brawlerFile >> brawlerJson;
 
-            m_brawlers.push_back(
-                std::make_shared<Brawler>(brawlerJson, brawlerFolder));
+            BrawlerData data =
+                parser.parseBrawlerJson(brawlerJson, brawlerFolder);
+
+            m_brawlers.push_back(data);
+            m_brawlerSprites.push_back(raylib::Texture(data.charSelectSprite));
         }
     }
 }
@@ -92,10 +97,11 @@ void CharSelectState::draw() {
              TITLE_FONT_SIZE, TITLE_FONT_SIZE, BLACK);
 
     // Draw all characters
+    const int NAME_FONT_SIZE = 25;
     const int MAX_PER_ROW = 5;
     const std::array<int, 5> XES = {150, 350, 550, 750, 950};
     const int STARTINGY = 200;
-    const int SELECT_BORDER_WITH = 10;
+    const int SELECT_BORDER_WIDTH = 10;
 
     Vector2 nextPos = {
         (float)XES[0],
@@ -106,14 +112,21 @@ void CharSelectState::draw() {
     int brawlerIdx = 0;
     for (auto &brawler : m_brawlers) {
         if (brawlerIdx == m_selectedBrawlerIdx) {
-            DrawRectangle(nextPos.x - SELECT_BORDER_WITH,
-                          nextPos.y - SELECT_BORDER_WITH,
-                          CSSPRITE_WIDTH + (SELECT_BORDER_WITH * 2),
-                          CSSPRITE_HEIGHT + (SELECT_BORDER_WITH * 2),
+            DrawRectangle(nextPos.x - SELECT_BORDER_WIDTH,
+                          nextPos.y - SELECT_BORDER_WIDTH,
+                          CSSPRITE_WIDTH + (SELECT_BORDER_WIDTH * 2),
+                          CSSPRITE_HEIGHT + (SELECT_BORDER_WIDTH * 2),
                           m_selectBorderColor);
         }
 
-        DrawTextureV(brawler->getCharSelectSprite(), nextPos, WHITE);
+        // sprite
+        DrawTextureV(m_brawlerSprites.at(idx), nextPos, WHITE);
+        // name
+        int nameWidth = MeasureText(brawler.name.c_str(), NAME_FONT_SIZE);
+        int namePosX = nextPos.x + (CSSPRITE_WIDTH / 2) - (nameWidth / 2);
+
+        DrawText(brawler.name.c_str(), (int)nextPos.x,
+                 nextPos.y + CSSPRITE_HEIGHT + SELECT_BORDER_WIDTH, 25, BLACK);
 
         brawlerIdx++;
         ++idx;
@@ -125,6 +138,4 @@ void CharSelectState::draw() {
     }
 }
 
-SharedBrawler CharSelectState::getSelectedBrawler() {
-    return m_selectedBrawler;
-}
+BrawlerData CharSelectState::getSelectedBrawler() { return m_selectedBrawler; }

@@ -1,4 +1,5 @@
 #pragma once
+#include "brawlerjsonparser.h"
 #include "enums.h"
 #include "raylib-cpp.hpp"
 #include <filesystem>
@@ -12,31 +13,14 @@ using json = nlohmann::json;
 using TexVec = std::vector<raylib::Texture>;
 using CollisionRects = std::vector<Rectangle>;
 
-typedef struct {
-    raylib::Texture spriteSheet;
-    int numFrames;
-    int animFPS;
-} BrawlerAnimData;
-
-typedef struct {
-    raylib::Texture spriteSheet;
-    int numFrames;
-    int animFPS;
-    double hitStunTime;
-    std::vector<Rectangle> hitboxes;
-} BrawlerAttackData;
-
 class Brawler {
   public:
     Brawler(Vector2 pos, int numJumps, int weight, std::string name);
-    Brawler(json brawlerJson, std::filesystem::path jsonPath);
+    Brawler(BrawlerData brawlerData);
 
     virtual void draw();
     virtual void update(CollisionRects &arenaCollisions);
     virtual void move(CollisionRects &arenaCollisions);
-
-    BrawlerAnimData parseAnimJson(json animData);
-    BrawlerAttackData parseAtkJson(json atkData);
 
     void setMovable();
     void setPos(Vector2 pos);

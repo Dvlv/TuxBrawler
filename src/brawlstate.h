@@ -1,6 +1,7 @@
 #pragma once
 #include "arena.h"
 #include "brawler.h"
+#include "brawlerjsonparser.h"
 #include "player.h"
 #include "raylib-cpp.hpp"
 #include "state.h"
@@ -17,7 +18,7 @@ class BrawlState : public State {
     void update() override;
     void draw() override;
 
-    void setPlayerBrawler(SharedBrawler brawler);
+    void setPlayerBrawler(BrawlerData brawlerData);
 
   private:
     Brawlers m_brawlers;
