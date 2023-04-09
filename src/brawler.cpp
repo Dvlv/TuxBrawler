@@ -1,4 +1,5 @@
 #include "brawler.h"
+#include "Texture.hpp"
 #include "brawlerjsonparser.h"
 #include "constants.h"
 #include "raylib-cpp.hpp"
@@ -67,16 +68,15 @@ void Brawler::move(CollisionRects &arenaCollisions) {
     bool is_moving_up = m_velocity.y < 0;
     bool is_moving_down = m_velocity.y > 0;
 
-    Rectangle brawlerHitbox = {m_pos.x, m_pos.y, BRAWLER_WIDTH, BRAWLER_HEIGHT};
+    Vector2 spriteBox = this->spritePos();
+    Rectangle brawlerHitbox = {spriteBox.x, spriteBox.y, BRAWLER_WIDTH,
+                               BRAWLER_HEIGHT};
 
     int i = 0;
     for (auto &surface : arenaCollisions) {
         ++i;
         if (CheckCollisionRecs(brawlerHitbox, surface)) {
             Rectangle collRec = GetCollisionRec(brawlerHitbox, surface);
-
-            // printf("Colliding %d: %f, %f, %f, %f\n", i, collRec.x, collRec.y,
-            // brawlerHitbox.x, brawlerHitbox.y);
 
             // check where collision rec is relative to me
             bool colliding_left = collRec.x <= brawlerHitbox.x &&
@@ -114,3 +114,41 @@ void Brawler::setMovable() { m_canMove = true; }
 void Brawler::setPos(Vector2 pos) { m_pos = pos; }
 
 raylib::Texture &Brawler::getCharSelectSprite() { return m_charSelectSprite; }
+
+void Brawler::loadSpritesheets() {
+    for (auto [anim, animData] : m_animationData) {
+        if (animData.spriteSheet != "" &&
+            std::filesystem::exists(animData.spriteSheet)) {
+            m_animSpritesheets[anim] = raylib::Texture(animData.spriteSheet);
+        }
+    }
+
+    for (auto [atk, atkData] : m_attackData) {
+        if (atkData.spriteSheet != "" &&
+            std::filesystem::exists(atkData.spriteSheet)) {
+            m_atkSpritesheets[atk] = raylib::Texture(atkData.spriteSheet);
+        }
+    }
+}
+
+Vector2 Brawler::feetPos() {
+    // brawler sprites are 100x75, brawler sits at the bottom-center
+    // as 50x50, feet are at bottom-center of THAT
+    return {m_pos.x + BRAWLER_SPRITE_WIDTH / 2,
+            m_pos.y + BRAWLER_SPRITE_HEIGHT};
+}
+
+Vector2 Brawler::spritePos() {
+    // brawler sprites are 100x75, brawler sits at the bottom-center
+    // as 50x50
+    return {m_pos.x + ((BRAWLER_SPRITE_WIDTH - BRAWLER_WIDTH) / 2),
+            m_pos.y + (BRAWLER_SPRITE_HEIGHT - BRAWLER_HEIGHT)};
+}
+
+void Brawler::setAnimation(BrawlerAnimations anim) {
+    m_currentAnim = anim;
+    m_currentAnimFrame = 0;
+    m_animFrameTimer = 0;
+}
+
+void Brawler::animate() {}

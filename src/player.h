@@ -14,6 +14,7 @@ class Player : public Brawler {
 
     virtual void draw() override;
     virtual void update(CollisionRects &arenaCollisions) override;
+    virtual void animate() override;
 
   private:
     void processMovementInputs();

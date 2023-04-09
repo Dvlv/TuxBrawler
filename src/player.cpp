@@ -28,9 +28,16 @@ void Player::draw() {
             DrawText(txt.c_str(), 400, 100, 40, BLACK);
         }
     } else {
-        DrawRectangleRec(
-            Rectangle{m_pos.x, m_pos.y, BRAWLER_WIDTH, BRAWLER_HEIGHT}, GREEN);
-        DrawEllipse(m_pos.x, m_pos.y, 2, 2, RED);
+        // draw entire box
+        DrawRectangleRec(Rectangle{m_pos.x, m_pos.y, BRAWLER_SPRITE_WIDTH,
+                                   BRAWLER_SPRITE_HEIGHT},
+                         GREEN);
+        // draw feet pos
+        DrawEllipse(this->feetPos().x, this->feetPos().y, 3, 3, RED);
+
+        // draw sprite area
+        DrawRectangle(this->spritePos().x, this->spritePos().y, BRAWLER_WIDTH,
+                      BRAWLER_HEIGHT, BLUE);
     }
     DrawText(m_name.data(), m_pos.x, m_pos.y - 20, 20, BLACK);
 }
@@ -118,5 +125,18 @@ void Player::processAttackInputs() {
         // Finisher
         m_isPerformingAttack = true;
         m_attackBeingPerformed = &m_attackData[BrawlerAttacks::Finisher];
+    }
+}
+
+void Player::animate() {
+    ++m_animFrameTimer;
+    // TODO store this in aniimData struct
+    int frameChangePoint = 60 / m_animationData[m_currentAnim].animFPS;
+    if (m_animFrameTimer >= frameChangePoint) {
+        ++m_currentAnimFrame;
+        m_animFrameTimer = 0;
+        if (m_currentAnimFrame > m_animationData[m_currentAnim].numFrames) {
+            m_currentAnimFrame = 0;
+        }
     }
 }

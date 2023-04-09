@@ -125,7 +125,7 @@ void CharSelectState::draw() {
         int nameWidth = MeasureText(brawler.name.c_str(), NAME_FONT_SIZE);
         int namePosX = nextPos.x + (CSSPRITE_WIDTH / 2) - (nameWidth / 2);
 
-        DrawText(brawler.name.c_str(), (int)nextPos.x,
+        DrawText(brawler.name.c_str(), namePosX,
                  nextPos.y + CSSPRITE_HEIGHT + SELECT_BORDER_WIDTH, 25, BLACK);
 
         brawlerIdx++;

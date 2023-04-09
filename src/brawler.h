@@ -21,9 +21,15 @@ class Brawler {
     virtual void draw();
     virtual void update(CollisionRects &arenaCollisions);
     virtual void move(CollisionRects &arenaCollisions);
+    virtual void animate();
 
+    void setAnimation(BrawlerAnimations anim);
     void setMovable();
     void setPos(Vector2 pos);
+
+    void loadSpritesheets();
+    Vector2 feetPos();
+    Vector2 spritePos();
 
     raylib::Texture &getCharSelectSprite();
 
@@ -40,6 +46,9 @@ class Brawler {
     std::unordered_map<BrawlerAnimations, BrawlerAnimData> m_animationData;
     std::unordered_map<BrawlerAttacks, BrawlerAttackData> m_attackData;
 
+    std::map<BrawlerAnimations, raylib::Texture> m_animSpritesheets;
+    std::map<BrawlerAttacks, raylib::Texture> m_atkSpritesheets;
+
     // state
     bool m_canMove = false;
     bool m_isInAir = false;
@@ -49,6 +58,8 @@ class Brawler {
     bool m_isPerformingAttack = false;
     BrawlerAttackData *m_attackBeingPerformed = nullptr;
     BrawlerAnimations m_currentAnim = BrawlerAnimations::Idle;
+    int m_currentAnimFrame = 0;
+    int m_animFrameTimer = 0;
 
     int m_damage = 0;
     int m_currentAttackFrame = 0;

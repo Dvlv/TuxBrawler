@@ -81,7 +81,7 @@ BrawlerJsonParser::parseAnimJson(json animData,
     }
 
     return BrawlerAnimData{
-        .spriteSheet = jsonPath / sprite,
+        .spriteSheet = jsonPath / "sprites" / sprite,
         .numFrames = numFrames,
         .animFPS = animFPS,
     };
@@ -130,7 +130,7 @@ BrawlerJsonParser::parseAtkJson(json atkData, std::filesystem::path jsonPath) {
         }
     }
 
-    return BrawlerAttackData{.spriteSheet = jsonPath / sprite,
+    return BrawlerAttackData{.spriteSheet = jsonPath / "sprites" / sprite,
                              .numFrames = numFrames,
                              .animFPS = animFPS,
                              .hitStunTime = hitStunTime,

@@ -55,6 +55,7 @@ void BrawlState::setPlayerBrawler(BrawlerData brawlerData) {
     std::shared_ptr<Player> player = std::make_shared<Player>(brawlerData);
     player->setPos({300, 300});
     player->setMovable();
+    player->loadSpritesheets();
 
     m_brawlers.push_back(player);
 }
