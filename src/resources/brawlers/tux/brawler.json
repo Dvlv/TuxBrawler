@@ -8,7 +8,7 @@
         "idle": {
             "sprite": "idle.png",
             "numFrames": 2,
-            "animFPS": 2
+            "animFPS": 1
         },
         "run": {
             "sprite": "run.png",

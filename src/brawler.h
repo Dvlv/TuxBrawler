@@ -60,6 +60,7 @@ class Brawler {
     BrawlerAnimations m_currentAnim = BrawlerAnimations::Idle;
     int m_currentAnimFrame = 0;
     int m_animFrameTimer = 0;
+    bool m_isFacingLeft = false;
 
     int m_damage = 0;
     int m_currentAttackFrame = 0;

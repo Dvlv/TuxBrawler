@@ -62,6 +62,13 @@ void Brawler::move(CollisionRects &arenaCollisions) {
     m_pos.x += m_velocity.x;
     m_pos.y += m_velocity.y;
 
+    // flip sprites if moving backwards
+    if (m_velocity.x < 0) {
+        m_isFacingLeft = true;
+    } else if (m_velocity.x > 0) {
+        m_isFacingLeft = false;
+    }
+
     // apply arena collisions
     bool is_moving_left = m_velocity.x < 0;
     bool is_moving_right = m_velocity.x > 0;

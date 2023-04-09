@@ -38,6 +38,19 @@ void Player::draw() {
         // draw sprite area
         DrawRectangle(this->spritePos().x, this->spritePos().y, BRAWLER_WIDTH,
                       BRAWLER_HEIGHT, BLUE);
+
+        // draw actual texture
+        Rectangle texRec;
+
+        if (m_isFacingLeft) {
+            texRec = {(float)(m_currentAnimFrame + 1) * BRAWLER_SPRITE_WIDTH, 0,
+                      -BRAWLER_SPRITE_WIDTH, BRAWLER_SPRITE_HEIGHT};
+        } else {
+            texRec = {(float)m_currentAnimFrame * BRAWLER_SPRITE_WIDTH, 0,
+                      BRAWLER_SPRITE_WIDTH, BRAWLER_SPRITE_HEIGHT};
+        }
+
+        DrawTextureRec(m_animSpritesheets[m_currentAnim], texRec, m_pos, WHITE);
     }
     DrawText(m_name.data(), m_pos.x, m_pos.y - 20, 20, BLACK);
 }
@@ -54,6 +67,7 @@ void Player::update(CollisionRects &arenaCollisions) {
     this->processAttackInputs();
 
     this->move(arenaCollisions);
+    this->animate();
 }
 
 void Player::processMovementInputs() {
@@ -135,7 +149,8 @@ void Player::animate() {
     if (m_animFrameTimer >= frameChangePoint) {
         ++m_currentAnimFrame;
         m_animFrameTimer = 0;
-        if (m_currentAnimFrame > m_animationData[m_currentAnim].numFrames) {
+        // currentAnimFrame is 0-indexed
+        if (m_currentAnimFrame >= m_animationData[m_currentAnim].numFrames) {
             m_currentAnimFrame = 0;
         }
     }
