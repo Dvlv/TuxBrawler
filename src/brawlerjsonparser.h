@@ -15,9 +15,7 @@ typedef struct {
 } BrawlerAnimData;
 
 typedef struct {
-    std::filesystem::path spriteSheet;
-    int numFrames;
-    int animFPS;
+    BrawlerAnimData animData;
     double hitStunTime;
     std::vector<Rectangle> hitboxes;
 

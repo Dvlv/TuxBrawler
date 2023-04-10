@@ -47,12 +47,21 @@ BrawlerJsonParser::parseBrawlerJson(json brawlerJson,
         if (atkType == "basic") {
             data.attackData[BrawlerAttacks::Basic] =
                 this->parseAtkJson(atk.value(), jsonPath);
+
+            data.animationData[BrawlerAnimations::Attack_Basic] =
+                data.attackData[BrawlerAttacks::Basic].animData;
         } else if (atkType == "special") {
             data.attackData[BrawlerAttacks::Special] =
                 this->parseAtkJson(atk.value(), jsonPath);
+
+            data.animationData[BrawlerAnimations::Attack_Special] =
+                data.attackData[BrawlerAttacks::Special].animData;
         } else if (atkType == "finisher") {
             data.attackData[BrawlerAttacks::Finisher] =
                 this->parseAtkJson(atk.value(), jsonPath);
+
+            data.animationData[BrawlerAnimations::Attack_Finisher] =
+                data.attackData[BrawlerAttacks::Finisher].animData;
         }
     }
 
@@ -130,9 +139,11 @@ BrawlerJsonParser::parseAtkJson(json atkData, std::filesystem::path jsonPath) {
         }
     }
 
-    return BrawlerAttackData{.spriteSheet = jsonPath / "sprites" / sprite,
-                             .numFrames = numFrames,
-                             .animFPS = animFPS,
-                             .hitStunTime = hitStunTime,
-                             .hitboxes = hitboxRects};
+    return BrawlerAttackData{
+        .animData =
+            BrawlerAnimData{.spriteSheet = jsonPath / "sprites" / sprite,
+                            .numFrames = numFrames,
+                            .animFPS = animFPS},
+        .hitStunTime = hitStunTime,
+        .hitboxes = hitboxRects};
 }

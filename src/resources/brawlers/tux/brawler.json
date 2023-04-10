@@ -35,7 +35,7 @@
         "basic": {
             "sprite": "basic.png",
             "numFrames": 3,
-            "animFPS": 6,
+            "animFPS": 3,
             "hitStunTime": 0.2,
             "hitboxes": [
                 [

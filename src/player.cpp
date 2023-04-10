@@ -31,38 +31,38 @@ void Player::draw() {
 
             DrawText(txt.c_str(), 400, 100, 40, BLACK);
         }
-    } else {
+    }
 #if DRAW_COLLISIONS
-        // draw entire box
-        DrawRectangleRec(Rectangle{m_pos.x, m_pos.y, BRAWLER_SPRITE_WIDTH,
-                                   BRAWLER_SPRITE_HEIGHT},
-                         GREEN);
-        // draw feet pos
-        DrawEllipse(this->feetPos().x, this->feetPos().y, 3, 3, RED);
+    // draw entire box
+    DrawRectangleRec(Rectangle{m_pos.x, m_pos.y, BRAWLER_SPRITE_WIDTH,
+                               BRAWLER_SPRITE_HEIGHT},
+                     GREEN);
+    // draw feet pos
+    DrawEllipse(this->feetPos().x, this->feetPos().y, 3, 3, RED);
 
-        // draw sprite area
-        DrawRectangle(this->spritePos().x, this->spritePos().y, BRAWLER_WIDTH,
-                      BRAWLER_HEIGHT, BLUE);
+    // draw sprite area
+    DrawRectangle(this->spritePos().x, this->spritePos().y, BRAWLER_WIDTH,
+                  BRAWLER_HEIGHT, BLUE);
 
 #endif
-        // draw actual texture
-        Rectangle texRec;
+    // draw actual texture
+    Rectangle texRec;
 
-        if (m_isFacingLeft) {
-            texRec = {(float)(m_currentAnimFrame + 1) * BRAWLER_SPRITE_WIDTH, 0,
-                      -BRAWLER_SPRITE_WIDTH, BRAWLER_SPRITE_HEIGHT};
-        } else {
-            texRec = {(float)m_currentAnimFrame * BRAWLER_SPRITE_WIDTH, 0,
-                      BRAWLER_SPRITE_WIDTH, BRAWLER_SPRITE_HEIGHT};
-        }
-
-        DrawTextureRec(m_animSpritesheets[m_currentAnim], texRec, m_pos, WHITE);
-        // DrawTexturePro(m_animSpritesheets[m_currentAnim], texRec,
-        //{m_pos.x - (BRAWLER_SPRITE_WIDTH / 2),
-        // m_pos.y - BRAWLER_SPRITE_HEIGHT,
-        // BRAWLER_SPRITE_WIDTH * 2, BRAWLER_SPRITE_HEIGHT * 2},
-        //{0, 0}, 0, WHITE);
+    if (m_isFacingLeft) {
+        texRec = {(float)(m_currentAnimFrame + 1) * BRAWLER_SPRITE_WIDTH, 0,
+                  -BRAWLER_SPRITE_WIDTH, BRAWLER_SPRITE_HEIGHT};
+    } else {
+        texRec = {(float)m_currentAnimFrame * BRAWLER_SPRITE_WIDTH, 0,
+                  BRAWLER_SPRITE_WIDTH, BRAWLER_SPRITE_HEIGHT};
     }
+
+    DrawTextureRec(m_animSpritesheets[m_currentAnim], texRec, m_pos, WHITE);
+    // DrawTexturePro(m_animSpritesheets[m_currentAnim], texRec,
+    //{m_pos.x - (BRAWLER_SPRITE_WIDTH / 2),
+    // m_pos.y - BRAWLER_SPRITE_HEIGHT,
+    // BRAWLER_SPRITE_WIDTH * 2, BRAWLER_SPRITE_HEIGHT * 2},
+    //{0, 0}, 0, WHITE);
+
     // DrawText(m_name.data(), m_pos.x, m_pos.y - 20, 20, BLACK);
 }
 
@@ -89,7 +89,7 @@ void Player::processMovementInputs() {
 
     bool isMoveButtonPressed = false;
 
-    if (!m_isBlocking) {
+    if (!m_isBlocking && m_isPerformingAttack) {
         if (IsKeyDown(KEY_LEFT)) {
             isMoveButtonPressed = true;
             m_velocity.x -= m_speed;
@@ -107,7 +107,7 @@ void Player::processMovementInputs() {
             }
         }
 
-        if (!isMoveButtonPressed && !m_isInAir) {
+        if (!isMoveButtonPressed && !m_isInAir && !m_isPerformingAttack) {
             this->setAnimation(BrawlerAnimations::Idle);
         }
     }
@@ -134,7 +134,7 @@ void Player::processJumpAndGravity() {
         m_currentJump++;
         m_isInAir = true;
 
-        if (!m_isHitStun) {
+        if (!m_isHitStun && !m_isPerformingAttack) {
             this->setAnimation(BrawlerAnimations::Jump);
         }
     } else {
@@ -161,6 +161,7 @@ void Player::processAttackInputs() {
         // basic attack
         m_isPerformingAttack = true;
         m_attackBeingPerformed = &m_attackData[BrawlerAttacks::Basic];
+        this->setAnimation(BrawlerAnimations::Attack_Basic);
 
         // TODO choose attack based on some kind of graph?
     } else if (IsKeyPressed(KEY_S)) {

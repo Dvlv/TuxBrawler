@@ -13,6 +13,9 @@ enum class BrawlerAnimations {
     Block,
     Hit,
     Jump,
+    Attack_Basic,
+    Attack_Special,
+    Attack_Finisher,
 };
 
 enum class BrawlerAttacks {

@@ -2,6 +2,7 @@
 #include "Texture.hpp"
 #include "brawlerjsonparser.h"
 #include "constants.h"
+#include "enums.h"
 #include "raylib-cpp.hpp"
 #include "raylib.h"
 #include <filesystem>
@@ -127,13 +128,6 @@ void Brawler::loadSpritesheets() {
         if (animData.spriteSheet != "" &&
             std::filesystem::exists(animData.spriteSheet)) {
             m_animSpritesheets[anim] = raylib::Texture(animData.spriteSheet);
-        }
-    }
-
-    for (auto [atk, atkData] : m_attackData) {
-        if (atkData.spriteSheet != "" &&
-            std::filesystem::exists(atkData.spriteSheet)) {
-            m_atkSpritesheets[atk] = raylib::Texture(atkData.spriteSheet);
         }
     }
 }
