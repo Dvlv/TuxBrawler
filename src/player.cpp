@@ -15,9 +15,13 @@ Player::Player(Vector2 pos, int numJumps, int weight, std::string name)
 Player::Player(BrawlerData brawlerData) : Brawler(brawlerData) {}
 
 void Player::draw() {
+#define DRAW_COLLISIONS true
+
     if (m_isPerformingAttack) {
+#if DRAW_COLLISIONS
         DrawRectangleRec(
             Rectangle{m_pos.x, m_pos.y, BRAWLER_WIDTH, BRAWLER_HEIGHT}, RED);
+#endif
 
         if (m_attackBeingPerformed != nullptr) {
             std::string txt =
@@ -28,6 +32,7 @@ void Player::draw() {
             DrawText(txt.c_str(), 400, 100, 40, BLACK);
         }
     } else {
+#if DRAW_COLLISIONS
         // draw entire box
         DrawRectangleRec(Rectangle{m_pos.x, m_pos.y, BRAWLER_SPRITE_WIDTH,
                                    BRAWLER_SPRITE_HEIGHT},
@@ -39,6 +44,7 @@ void Player::draw() {
         DrawRectangle(this->spritePos().x, this->spritePos().y, BRAWLER_WIDTH,
                       BRAWLER_HEIGHT, BLUE);
 
+#endif
         // draw actual texture
         Rectangle texRec;
 
@@ -51,21 +57,28 @@ void Player::draw() {
         }
 
         DrawTextureRec(m_animSpritesheets[m_currentAnim], texRec, m_pos, WHITE);
+        // DrawTexturePro(m_animSpritesheets[m_currentAnim], texRec,
+        //{m_pos.x - (BRAWLER_SPRITE_WIDTH / 2),
+        // m_pos.y - BRAWLER_SPRITE_HEIGHT,
+        // BRAWLER_SPRITE_WIDTH * 2, BRAWLER_SPRITE_HEIGHT * 2},
+        //{0, 0}, 0, WHITE);
     }
-    DrawText(m_name.data(), m_pos.x, m_pos.y - 20, 20, BLACK);
+    // DrawText(m_name.data(), m_pos.x, m_pos.y - 20, 20, BLACK);
 }
 
 void Player::update(CollisionRects &arenaCollisions) {
+    // Block
+    this->processBlockInput();
+
     // Left / Right
     this->processMovementInputs();
-    // this->processKnockback();
+    // Attack
+    this->processAttackInputs();
 
     // Jump / Gravity
     this->processJumpAndGravity();
 
-    // Attack
-    this->processAttackInputs();
-
+    // this->processKnockback();
     this->move(arenaCollisions);
     this->animate();
 }
@@ -75,13 +88,28 @@ void Player::processMovementInputs() {
         return;
 
     bool isMoveButtonPressed = false;
-    if (IsKeyDown(KEY_LEFT)) {
-        isMoveButtonPressed = true;
-        m_velocity.x -= m_speed;
 
-    } else if (IsKeyDown(KEY_RIGHT)) {
-        isMoveButtonPressed = true;
-        m_velocity.x += m_speed;
+    if (!m_isBlocking) {
+        if (IsKeyDown(KEY_LEFT)) {
+            isMoveButtonPressed = true;
+            m_velocity.x -= m_speed;
+
+            if (!m_isInAir && !m_isHitStun) {
+                this->setAnimation(BrawlerAnimations::Run);
+            }
+
+        } else if (IsKeyDown(KEY_RIGHT)) {
+            isMoveButtonPressed = true;
+            m_velocity.x += m_speed;
+
+            if (!m_isInAir && !m_isHitStun) {
+                this->setAnimation(BrawlerAnimations::Run);
+            }
+        }
+
+        if (!isMoveButtonPressed && !m_isInAir) {
+            this->setAnimation(BrawlerAnimations::Idle);
+        }
     }
 
     if (!isMoveButtonPressed && m_velocity.x != 0) {
@@ -100,10 +128,15 @@ void Player::processMovementInputs() {
 }
 
 void Player::processJumpAndGravity() {
-    if (IsKeyPressed(KEY_UP) && m_currentJump < m_numJumps && m_canMove) {
+    if (IsKeyPressed(KEY_UP) && m_currentJump < m_numJumps && m_canMove &&
+        !m_isBlocking) {
         m_velocity.y -= m_jumpStr;
         m_currentJump++;
         m_isInAir = true;
+
+        if (!m_isHitStun) {
+            this->setAnimation(BrawlerAnimations::Jump);
+        }
     } else {
         m_velocity.y += GRAVITY;
     }
@@ -143,6 +176,11 @@ void Player::processAttackInputs() {
 }
 
 void Player::animate() {
+    if (m_animationData[m_currentAnim].numFrames == 1) {
+        // anim is a static frame, no need to animate
+        return;
+    }
+
     ++m_animFrameTimer;
     // TODO store this in aniimData struct
     int frameChangePoint = 60 / m_animationData[m_currentAnim].animFPS;
@@ -152,6 +190,19 @@ void Player::animate() {
         // currentAnimFrame is 0-indexed
         if (m_currentAnimFrame >= m_animationData[m_currentAnim].numFrames) {
             m_currentAnimFrame = 0;
+        }
+    }
+}
+
+void Player::processBlockInput() {
+    if (IsKeyDown(KEY_Q) && !m_isInAir) {
+        m_isBlocking = true;
+        this->setAnimation(BrawlerAnimations::Block);
+    } else {
+        m_isBlocking = false;
+
+        if (m_currentAnim == BrawlerAnimations::Block) {
+            this->setAnimation(BrawlerAnimations::Idle);
         }
     }
 }

@@ -12,8 +12,8 @@
         },
         "run": {
             "sprite": "run.png",
-            "numFrames": 4,
-            "animFPS": 16
+            "numFrames": 2,
+            "animFPS": 6
         },
         "block": {
             "sprite": "block.png",
@@ -22,13 +22,13 @@
         },
         "hit": {
             "sprite": "hit.png",
-            "numFrames": 2,
-            "animFPS": 2
+            "numFrames": 1,
+            "animFPS": 1
         },
         "jump": {
             "sprite": "jump.png",
-            "numFrames": 2,
-            "animFPS": 2
+            "numFrames": 1,
+            "animFPS": 1
         }
     },
     "attacks": {

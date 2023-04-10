@@ -20,4 +20,5 @@ class Player : public Brawler {
     void processMovementInputs();
     void processJumpAndGravity();
     void processAttackInputs();
+    void processBlockInput();
 };
