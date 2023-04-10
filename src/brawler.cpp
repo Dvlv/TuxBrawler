@@ -153,6 +153,9 @@ Vector2 Brawler::spritePos() {
 }
 
 void Brawler::setAnimation(BrawlerAnimations anim) {
+    if (anim == m_currentAnim)
+        return;
+
     m_currentAnim = anim;
     m_currentAnimFrame = 0;
     m_animFrameTimer = 0;

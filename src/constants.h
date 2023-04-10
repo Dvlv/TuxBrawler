@@ -9,10 +9,10 @@ const int DRAG = 1;
 const double GRAVITY = 1.5;
 
 // brawlers
-const int BRAWLER_WIDTH = 50;
-const int BRAWLER_HEIGHT = 50;
-const int BRAWLER_SPRITE_WIDTH = 100;
-const int BRAWLER_SPRITE_HEIGHT = 75;
+const int BRAWLER_WIDTH = 100;
+const int BRAWLER_HEIGHT = 100;
+const int BRAWLER_SPRITE_WIDTH = 200;
+const int BRAWLER_SPRITE_HEIGHT = 150;
 
 // charselect
 const int CSSPRITE_WIDTH = 100;
