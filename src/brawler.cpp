@@ -156,3 +156,44 @@ void Brawler::setAnimation(BrawlerAnimations anim) {
 }
 
 void Brawler::animate() {}
+
+void Brawler::onAttackFinish() {
+    m_isPerformingAttack = false;
+    m_currentAttackFrame = 0;
+    m_attackBeingPerformed = nullptr;
+    this->setAnimation(BrawlerAnimations::Idle);
+}
+
+void Brawler::performAttack(BrawlerAttacks atk) {
+    m_isPerformingAttack = true;
+    m_attackBeingPerformed = &m_attackData[atk];
+    this->setAnimation(m_attackAnimations.at(atk));
+}
+
+Rectangle Brawler::getActiveAttackHitbox() {
+    if (m_attackBeingPerformed == nullptr) {
+        return {0, 0, 0, 0};
+    }
+
+    Rectangle relativeAtkArea =
+        m_attackBeingPerformed->hitboxes.at(m_currentAttackFrame);
+
+    Vector2 myArea = this->spritePos();
+
+    Rectangle atkHitbox = {myArea.x + relativeAtkArea.x,
+                           myArea.y + relativeAtkArea.y, relativeAtkArea.width,
+                           relativeAtkArea.height};
+
+    return atkHitbox;
+}
+
+void Brawler::attackFrameUpdate() {
+    if (m_attackBeingPerformed == nullptr)
+        return;
+
+    ++m_currentAttackFrame;
+
+    if (m_currentAttackFrame >= m_attackBeingPerformed->animData.numFrames) {
+        this->onAttackFinish();
+    }
+}

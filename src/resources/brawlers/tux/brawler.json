@@ -35,14 +35,26 @@
         "basic": {
             "sprite": "basic.png",
             "numFrames": 3,
-            "animFPS": 3,
+            "animFPS": 12,
             "hitStunTime": 0.2,
             "hitboxes": [
                 [
-                    50,
-                    50,
-                    10,
-                    10
+                    75,
+                    55,
+                    45,
+                    30
+                ],
+                [
+                    80,
+                    35,
+                    45,
+                    30
+                ],
+                [
+                    80,
+                    15,
+                    45,
+                    30
                 ]
             ]
         },

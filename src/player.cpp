@@ -44,6 +44,11 @@ void Player::draw() {
     DrawRectangle(this->spritePos().x, this->spritePos().y, BRAWLER_WIDTH,
                   BRAWLER_HEIGHT, BLUE);
 
+    // draw attack hitbox
+    if (m_isPerformingAttack && m_attackBeingPerformed != nullptr) {
+        DrawRectangleRec(this->getActiveAttackHitbox(), {125, 125, 0, 120});
+    }
+
 #endif
     // draw actual texture
     Rectangle texRec;
@@ -89,7 +94,7 @@ void Player::processMovementInputs() {
 
     bool isMoveButtonPressed = false;
 
-    if (!m_isBlocking && m_isPerformingAttack) {
+    if (!m_isBlocking && !m_isPerformingAttack) {
         if (IsKeyDown(KEY_LEFT)) {
             isMoveButtonPressed = true;
             m_velocity.x -= m_speed;
@@ -149,19 +154,11 @@ void Player::processAttackInputs() {
     if (m_isPerformingAttack) {
         // already attacking, dont listen for next input until I have chaining
         // system
-        m_currentAttackFrame++;
-        if (m_currentAttackFrame >= 30) {
-            m_isPerformingAttack = false;
-            m_currentAttackFrame = 0;
-            m_attackBeingPerformed = nullptr;
-        }
         return;
     }
     if (IsKeyPressed(KEY_A)) {
         // basic attack
-        m_isPerformingAttack = true;
-        m_attackBeingPerformed = &m_attackData[BrawlerAttacks::Basic];
-        this->setAnimation(BrawlerAnimations::Attack_Basic);
+        this->performAttack(BrawlerAttacks::Basic);
 
         // TODO choose attack based on some kind of graph?
     } else if (IsKeyPressed(KEY_S)) {
@@ -188,6 +185,11 @@ void Player::animate() {
     if (m_animFrameTimer >= frameChangePoint) {
         ++m_currentAnimFrame;
         m_animFrameTimer = 0;
+
+        if (m_isPerformingAttack) {
+            this->attackFrameUpdate();
+        }
+
         // currentAnimFrame is 0-indexed
         if (m_currentAnimFrame >= m_animationData[m_currentAnim].numFrames) {
             m_currentAnimFrame = 0;

@@ -1,7 +1,9 @@
 #pragma once
+
 #include "brawlerjsonparser.h"
 #include "enums.h"
 #include "raylib-cpp.hpp"
+#include "raylib.h"
 #include <filesystem>
 #include <map>
 #include <nlohmann/json.hpp>
@@ -27,6 +29,11 @@ class Brawler {
     void setMovable();
     void setPos(Vector2 pos);
 
+    Rectangle getActiveAttackHitbox();
+    void performAttack(BrawlerAttacks atk);
+    void attackFrameUpdate();
+    void onAttackFinish();
+
     void loadSpritesheets();
     Vector2 feetPos();
     Vector2 spritePos();
@@ -48,6 +55,11 @@ class Brawler {
 
     std::map<BrawlerAnimations, raylib::Texture> m_animSpritesheets;
     std::map<BrawlerAttacks, raylib::Texture> m_atkSpritesheets;
+
+    std::unordered_map<BrawlerAttacks, BrawlerAnimations> m_attackAnimations{
+        {BrawlerAttacks::Basic, BrawlerAnimations::Attack_Basic},
+        {BrawlerAttacks::Special, BrawlerAnimations::Attack_Special},
+        {BrawlerAttacks::Finisher, BrawlerAnimations::Attack_Finisher}};
 
     // state
     bool m_canMove = false;
