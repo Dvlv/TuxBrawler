@@ -4,6 +4,7 @@
 enum class GameState {
     Title,
     CharSelect,
+    ArenaSelect,
     Menu,
     Brawl,
 };

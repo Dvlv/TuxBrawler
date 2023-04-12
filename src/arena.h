@@ -17,8 +17,12 @@ class Arena {
     // maps won't update to start with
     void draw();
     CollisionRects getCollisionRects();
+    std::string getArenaSelectSprite();
+
+    std::string m_name;
 
   private:
     raylib::Texture2D m_background;
+    std::string m_arenaSelectSprite;
     CollisionRects m_solidCollisionRects = std::vector<Rectangle>{};
 };

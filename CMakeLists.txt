@@ -52,6 +52,8 @@ set(SOURCES
     src/state.cpp
     src/charselectstate.h
     src/charselectstate.cpp
+    src/arenaselectstate.h
+    src/arenaselectstate.cpp
     src/brawler.cpp
     src/brawlstate.h
     src/brawlstate.cpp

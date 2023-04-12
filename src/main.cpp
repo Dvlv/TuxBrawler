@@ -1,3 +1,4 @@
+#include "arenaselectstate.h"
 #include "brawlstate.h"
 #include "charselectstate.h"
 #include "constants.h"
@@ -10,9 +11,10 @@ using UnqState = std::unique_ptr<State>;
 using SharedBrawler = std::shared_ptr<Brawler>;
 
 // TODO not global
-static GameState gs = GameState::CharSelect;
+static GameState gs = GameState::ArenaSelect;
 static std::unique_ptr<BrawlState> bs;
 static std::unique_ptr<CharSelectState> css;
+static std::unique_ptr<ArenaSelectState> ass;
 
 static State *cs;
 
@@ -32,6 +34,12 @@ void update() {
             break;
         case GameState::Brawl:
             gs = GameState::CharSelect;
+            break;
+        case GameState::ArenaSelect:
+            gs = GameState::CharSelect;
+            bs->setArena(ass->getSelectedArena());
+
+            cs = css.get();
             break;
         default:
             gs = GameState::CharSelect;
@@ -56,8 +64,9 @@ int main() {
 
     bs = std::make_unique<BrawlState>();
     css = std::make_unique<CharSelectState>();
+    ass = std::make_unique<ArenaSelectState>();
 
-    cs = css.get();
+    cs = ass.get();
 
     while (!window.ShouldClose()) {
         update();

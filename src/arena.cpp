@@ -12,16 +12,27 @@ Arena::Arena() {
 }
 
 Arena::Arena(json mapJson, std::filesystem::path jsonPath) {
-    std::string background = ""; // TODO default map bg
+    std::string background = "";   // TODO default map bg
+    std::string selectSprite = ""; // TODO default map bg
+    std::string name = "";
 
     if (mapJson.contains("sprite")) {
         background = mapJson["sprite"];
+    }
+    if (mapJson.contains("arenaSelectSprite")) {
+        selectSprite = mapJson["arenaSelectSprite"];
+    }
+
+    if (mapJson.contains("name")) {
+        name = mapJson["name"];
     }
 
     std::filesystem::path backgroundFilePath =
         jsonPath / std::filesystem::path(background);
 
     m_background = raylib::Texture(backgroundFilePath);
+    m_arenaSelectSprite = selectSprite;
+    m_name = name;
 
     if (mapJson.contains("collisions")) {
         std::vector<std::vector<int>> collisions =
@@ -51,3 +62,5 @@ void Arena::draw() {
 }
 
 CollisionRects Arena::getCollisionRects() { return m_solidCollisionRects; }
+
+std::string Arena::getArenaSelectSprite() { return m_arenaSelectSprite; }
