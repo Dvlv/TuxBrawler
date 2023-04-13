@@ -19,6 +19,7 @@ class BrawlState : public State {
     void draw() override;
 
     void setPlayerBrawler(BrawlerData brawlerData);
+    void addCpuBrawler(BrawlerData brawlerData);
     void setArena(std::shared_ptr<Arena> arena);
 
   private:

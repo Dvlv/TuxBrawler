@@ -54,7 +54,7 @@ void Player::draw() {
     Rectangle texRec;
 
     if (m_isFacingLeft) {
-        texRec = {(float)(m_currentAnimFrame + 1) * BRAWLER_SPRITE_WIDTH, 0,
+        texRec = {(float)(m_currentAnimFrame)*BRAWLER_SPRITE_WIDTH, 0,
                   -BRAWLER_SPRITE_WIDTH, BRAWLER_SPRITE_HEIGHT};
     } else {
         texRec = {(float)m_currentAnimFrame * BRAWLER_SPRITE_WIDTH, 0,

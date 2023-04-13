@@ -11,6 +11,7 @@
 #include <iostream>
 #include <memory>
 #include <nlohmann/json.hpp>
+#include <random>
 
 CharSelectState::CharSelectState() {
     using path = std::filesystem::path;
@@ -139,3 +140,16 @@ void CharSelectState::draw() {
 }
 
 BrawlerData CharSelectState::getSelectedBrawler() { return m_selectedBrawler; }
+
+BrawlerData CharSelectState::getRandomBrawler() {
+    std::random_device rd;  // obtain a random number from hardware
+    std::mt19937 gen(rd()); // seed the generator
+    std::uniform_int_distribution<> distr(0, m_brawlers.size() -
+                                                 1); // define the range
+
+    // int rndIdx = distr(gen);
+    //  for debugging
+    int rndIdx = 0;
+
+    return m_brawlers.at(rndIdx);
+}

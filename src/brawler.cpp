@@ -5,6 +5,7 @@
 #include "enums.h"
 #include "raylib-cpp.hpp"
 #include "raylib.h"
+#include <cstdlib>
 #include <filesystem>
 #include <iostream>
 #include <string_view>
@@ -32,12 +33,70 @@ Brawler::Brawler(BrawlerData brawlerData) {
 }
 
 void Brawler::draw() {
-    DrawRectangleRec(Rectangle{m_pos.x, m_pos.y, 50, 50}, GREEN);
-    DrawText(m_name.data(), m_pos.x, m_pos.y - 20, 20, BLACK);
+#define DRAW_COLLISIONS false
+
+    if (m_isPerformingAttack) {
+#if DRAW_COLLISIONS
+        DrawRectangleRec(
+            Rectangle{m_pos.x, m_pos.y, BRAWLER_WIDTH, BRAWLER_HEIGHT}, RED);
+#endif
+
+        if (m_attackBeingPerformed != nullptr) {
+            std::string txt =
+                "Atk: hs=" +
+                std::to_string(m_attackBeingPerformed->hitStunTime) +
+                " performed";
+
+            DrawText(txt.c_str(), 400, 100, 40, BLACK);
+        }
+    }
+#if DRAW_COLLISIONS
+    // draw entire box
+    DrawRectangleRec(Rectangle{m_pos.x, m_pos.y, BRAWLER_SPRITE_WIDTH,
+                               BRAWLER_SPRITE_HEIGHT},
+                     GREEN);
+    // draw feet pos
+    DrawEllipse(this->feetPos().x, this->feetPos().y, 3, 3, RED);
+
+    // draw sprite area
+    DrawRectangle(this->spritePos().x, this->spritePos().y, BRAWLER_WIDTH,
+                  BRAWLER_HEIGHT, BLUE);
+
+    // draw attack hitbox
+    if (m_isPerformingAttack && m_attackBeingPerformed != nullptr) {
+        DrawRectangleRec(this->getActiveAttackHitbox(), {125, 125, 0, 120});
+    }
+
+#endif
+    // draw actual texture
+    Rectangle texRec;
+
+    if (m_isFacingLeft) {
+        texRec = {(float)(m_currentAnimFrame + 1) * BRAWLER_SPRITE_WIDTH, 0,
+                  -BRAWLER_SPRITE_WIDTH, BRAWLER_SPRITE_HEIGHT};
+    } else {
+        texRec = {(float)m_currentAnimFrame * BRAWLER_SPRITE_WIDTH, 0,
+                  BRAWLER_SPRITE_WIDTH, BRAWLER_SPRITE_HEIGHT};
+    }
+
+    DrawTextureRec(m_animSpritesheets[m_currentAnim], texRec, m_pos, WHITE);
+    // DrawTexturePro(m_animSpritesheets[m_currentAnim], texRec,
+    //{m_pos.x - (BRAWLER_SPRITE_WIDTH / 2),
+    // m_pos.y - BRAWLER_SPRITE_HEIGHT,
+    // BRAWLER_SPRITE_WIDTH * 2, BRAWLER_SPRITE_HEIGHT * 2},
+    //{0, 0}, 0, WHITE);
+
+    // DrawText(m_name.data(), m_pos.x, m_pos.y - 20, 20, BLACK);
 }
 
 void Brawler::update(CollisionRects &arenaCollisions) {
+    this->processBlock();
+    this->processLeftRightMovements();
+    this->processAttack();
+    this->processJumpAndGravity();
+
     this->move(arenaCollisions);
+    this->animate();
 }
 
 void Brawler::move(CollisionRects &arenaCollisions) {
@@ -146,6 +205,14 @@ Vector2 Brawler::spritePos() {
             m_pos.y + (BRAWLER_SPRITE_HEIGHT - BRAWLER_HEIGHT)};
 }
 
+Vector2 Brawler::spriteOrigin() {
+    Vector2 myArea = this->spritePos();
+    Vector2 myAreaOrigin = {myArea.x + (BRAWLER_WIDTH / 2),
+                            myArea.y + (BRAWLER_HEIGHT / 2)};
+
+    return myAreaOrigin;
+}
+
 void Brawler::setAnimation(BrawlerAnimations anim) {
     if (anim == m_currentAnim)
         return;
@@ -155,7 +222,29 @@ void Brawler::setAnimation(BrawlerAnimations anim) {
     m_animFrameTimer = 0;
 }
 
-void Brawler::animate() {}
+void Brawler::animate() {
+    if (m_animationData[m_currentAnim].numFrames == 1) {
+        // anim is a static frame, no need to animate
+        return;
+    }
+
+    ++m_animFrameTimer;
+    // TODO store this in aniimData struct
+    int frameChangePoint = 60 / m_animationData[m_currentAnim].animFPS;
+    if (m_animFrameTimer >= frameChangePoint) {
+        ++m_currentAnimFrame;
+        m_animFrameTimer = 0;
+
+        if (m_isPerformingAttack) {
+            this->attackFrameUpdate();
+        }
+
+        // currentAnimFrame is 0-indexed
+        if (m_currentAnimFrame >= m_animationData[m_currentAnim].numFrames) {
+            m_currentAnimFrame = 0;
+        }
+    }
+}
 
 void Brawler::onAttackFinish() {
     m_isPerformingAttack = false;
@@ -178,11 +267,15 @@ Rectangle Brawler::getActiveAttackHitbox() {
     Rectangle relativeAtkArea =
         m_attackBeingPerformed->hitboxes.at(m_currentAttackFrame);
 
-    Vector2 myArea = this->spritePos();
+    Vector2 myAreaOrigin = this->spriteOrigin();
 
-    Rectangle atkHitbox = {myArea.x + relativeAtkArea.x,
-                           myArea.y + relativeAtkArea.y, relativeAtkArea.width,
-                           relativeAtkArea.height};
+    Rectangle atkHitbox = {myAreaOrigin.x + relativeAtkArea.x,
+                           myAreaOrigin.y + relativeAtkArea.y,
+                           relativeAtkArea.width, relativeAtkArea.height};
+    if (m_isFacingLeft) {
+        atkHitbox.x =
+            myAreaOrigin.x - relativeAtkArea.x - relativeAtkArea.width;
+    }
 
     return atkHitbox;
 }
@@ -195,5 +288,86 @@ void Brawler::attackFrameUpdate() {
 
     if (m_currentAttackFrame >= m_attackBeingPerformed->animData.numFrames) {
         this->onAttackFinish();
+    }
+}
+
+void Brawler::processLeftRightMovements() {
+    if (!m_canMove)
+        return;
+
+    bool shouldMoveLeft = false; // TODO
+    bool shouldMoveRight = false;
+
+    bool isMoving = false;
+
+    if (!m_isBlocking && !m_isPerformingAttack) {
+        if (shouldMoveLeft) {
+            isMoving = true;
+            m_velocity.x -= m_speed;
+
+            if (!m_isInAir && !m_isHitStun) {
+                this->setAnimation(BrawlerAnimations::Run);
+            }
+
+        } else if (shouldMoveRight) {
+            isMoving = true;
+            m_velocity.x += m_speed;
+
+            if (!m_isInAir && !m_isHitStun) {
+                this->setAnimation(BrawlerAnimations::Run);
+            }
+        }
+
+        if (!isMoving && !m_isInAir && !m_isPerformingAttack) {
+            this->setAnimation(BrawlerAnimations::Idle);
+        }
+    }
+
+    if (!isMoving && m_velocity.x != 0) {
+        if (m_velocity.x > 0) {
+            m_velocity.x -= DRAG;
+            if (m_velocity.x < 0) {
+                m_velocity.x = 0;
+            }
+        } else {
+            m_velocity.x += DRAG;
+            if (m_velocity.x > 0) {
+                m_velocity.x = 0;
+            }
+        }
+    }
+}
+
+void Brawler::processJumpAndGravity() {
+    int rnd = rand();
+    bool shouldJump = rnd % 9 == 0 && rnd % 12 == 0; // false; // TODO
+
+    if (shouldJump && m_currentJump < m_numJumps && m_canMove &&
+        !m_isBlocking) {
+        m_velocity.y -= m_jumpStr;
+        m_currentJump++;
+        m_isInAir = true;
+
+        if (!m_isHitStun && !m_isPerformingAttack) {
+            this->setAnimation(BrawlerAnimations::Jump);
+        }
+    } else {
+        m_velocity.y += GRAVITY;
+    }
+}
+
+void Brawler::processAttack() {}
+
+void Brawler::processBlock() {
+    bool shouldBlock = false; // TODO
+    if (shouldBlock && !m_isInAir) {
+        m_isBlocking = true;
+        this->setAnimation(BrawlerAnimations::Block);
+    } else {
+        m_isBlocking = false;
+
+        if (m_currentAnim == BrawlerAnimations::Block) {
+            this->setAnimation(BrawlerAnimations::Idle);
+        }
     }
 }

@@ -37,6 +37,7 @@ class Brawler {
     void loadSpritesheets();
     Vector2 feetPos();
     Vector2 spritePos();
+    Vector2 spriteOrigin();
 
     raylib::Texture &getCharSelectSprite();
 
@@ -79,4 +80,11 @@ class Brawler {
     int m_currentJump = 0;
     Vector2 m_velocity = Vector2{0, 0};
     Vector2 m_pos = {0, 0};
+
+  private:
+    // AI related physics funcs
+    void processLeftRightMovements();
+    void processJumpAndGravity();
+    void processAttack();
+    void processBlock();
 };

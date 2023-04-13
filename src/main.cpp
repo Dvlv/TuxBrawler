@@ -28,6 +28,7 @@ void update() {
             gs = GameState::Brawl;
 
             bs->setPlayerBrawler(css->getSelectedBrawler());
+            bs->addCpuBrawler(css->getRandomBrawler());
 
             cs = bs.get();
 

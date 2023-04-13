@@ -16,6 +16,7 @@ class CharSelectState : public State {
     void draw() override;
 
     BrawlerData getSelectedBrawler();
+    BrawlerData getRandomBrawler();
 
   private:
     std::vector<BrawlerData> m_brawlers{};
